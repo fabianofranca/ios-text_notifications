@@ -1,29 +1,45 @@
-//
-//  ViewController.m
-//  TextAndNotifications
-//
-//  Created by Fabiano Franca de Oliveira on 01/07/2018.
-//  Copyright © 2018 Fabiano França. All rights reserved.
-//
-
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property (weak, nonatomic) IBOutlet UITextView *textview;
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [self changeFont];
+    
+    [center addObserver:self
+               selector:@selector(changeNotification:)
+                   name:UIContentSizeCategoryDidChangeNotification
+                 object:nil];
+}
+- (void)changeNotification:(NSNotification *)notification {
+    [self changeFont];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center removeObserver:self
+                      name:UIContentSizeCategoryDidChangeNotification
+                    object:nil];
+}
+
+- (void)changeFont {
+    self.textview.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
 }
 
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+- (IBAction)buttonClick:(id)sender {
+    NSRange selected = [self.textview selectedRange];
+    
+    [self.textview.textStorage addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range: selected];
 }
-
-
 @end
